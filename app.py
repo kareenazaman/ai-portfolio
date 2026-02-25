@@ -282,7 +282,10 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         )
 
     # ---------- 4) Age questions ----------
-    if "how old" in q_lower or re.search(r"\bage\b", q_lower):
+    if any(phrase in q_lower for phrase in [
+        "how old", "how old r u", "how old are you", "what's ur age", "what's your age",
+        "age", "age?", "your age?"
+    ]):
         responses = [
             "<p>I don’t list my exact age here — this space is more about my skills, projects, and experience.</p>",
             "<p>Age isn’t really the focus of this portfolio. I’d rather show what I’ve actually built and learned.</p>",
@@ -333,12 +336,15 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         return True, random.choice(responses)
 
     # ---------- 7A) Thanks / gratitude ----------
-    if any(phrase in q_lower for phrase in [
-        "thank you", "thanks", "thanx", "thank u", "tysm", "thank", "ty"
-    ]):
+    tokens = re.findall(r"[a-z']+", q_lower)  # words only
+    token_set = set(tokens)
+
+    THANKS_WORDS = {"thanks", "thanx", "thank", "ty", "tysm"}
+
+    if ("thank" in token_set) or (token_set & THANKS_WORDS) or ("thank you" in q_lower) or ("thank u" in q_lower):
         responses = [
-            "<p>You’re welcome 🧡 </p>",
-            "<p>Glad I could help! 😊 </p>",
+            "<p>You’re welcome 🧡</p>",
+            "<p>Glad I could help! 😊</p>",
             "<p>Anytime! If there’s anything else you’re curious about in my portfolio, just ask.</p>",
         ]
         return True, random.choice(responses)
@@ -364,12 +370,12 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
     if any(word in q_lower for word in [
         "cool", "nice", "good", "awesome", "great", "impressive",
         "love this", "love it", "so clean", "beautiful", "pretty", "cute",
-        "nice portfolio", "good portfolio", "amazing", "wow"
+        "nice portfolio", "good portfolio", "amazing", "wow", "smart"
     ]):
         responses = [
             "<p>Thank you — that honestly means a lot 🧡</p>",
-            "<p>Thank youuu! I’m always trying to level up my knowledge and how I present them.</p>",
-            "<p>Thanks!. If you’re curious about anything else, ask me.</p>",
+            "<p>Thank youuu! Let me know if I can guide you to something else related to my portfolio :)</p>",
+            "<p>Thanks! If you’re curious about anything else, ask me.</p>",
         ]
         return True, random.choice(responses)
 
