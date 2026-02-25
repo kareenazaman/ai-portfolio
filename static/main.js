@@ -218,6 +218,11 @@ function microReply(html, delay = 350){
   let   lastUserNL = "";           // last normalized user text
 
   const PHRASES = {
+    identity: [
+      "I’m <b>Kareena’s AI twin</b> 🤖 — I speak in first person, but everything I say is based on Kareena’s real projects, skills, and experience.",
+      "Think of me as a <b>digital Kareena</b>. I’m here to guide you through my projects, skills, background, and contact info.",
+      "I’m Kareena in AI form 😄 Ask me anything about my portfolio — like projects, skills, or how to reach me."
+    ],
     about_follow: [
       "Hey, still me, <b>Kareena</b> 😊 What are you curious about now?",
       "You already met me, Kareena here — try checking out my projects and skills.",
@@ -665,7 +670,18 @@ function getProjectsFromDOM() {
     const links = project.links || {};
     const gh    = links.github ? `<a target="_blank" href="${links.github}">GitHub</a>` : "";
     const demo  = links.demo   ? `<a target="_blank" href="${links.demo}">Live</a>`     : "";
-    modal.querySelector(".pm-links").innerHTML = [gh, demo].filter(Boolean).join(" • ");
+
+    const linksContainer = modal.querySelector(".pm-links");
+
+    const renderedLinks = [gh, demo].filter(Boolean).join(" • ");
+
+    if (renderedLinks) {
+      linksContainer.innerHTML = renderedLinks;
+      linksContainer.style.display = "block";
+    } else {
+      linksContainer.innerHTML = "";
+      linksContainer.style.display = "none";   // ✅ completely hide section
+    }
 
     tagsEl.innerHTML = (project.stack || []).map(s => `<span>${s}</span>`).join("");
     return modal;
@@ -1062,19 +1078,18 @@ function initCertLightbox() {
   // ===================================================================
   // RENDER-ONCE helper with rotating follow-ups
   // ===================================================================
-  async function ensureOnce(selector, renderAsync, followupKey){
-    const existing = chatStream.querySelector(selector);
-    if (existing) {
-      const line = followupKey ? pickPhrase(followupKey) : "";
-      if (line) microReply(line);
-      requestAnimationFrame(() => scrollToBubbleTop(existing));
-      return existing;
-    }
-    const el = await renderAsync();
-    if (selector.startsWith(".")) el?.classList?.add(selector.slice(1));
-    markSeenFromEl(el);
-    return el;
+async function ensureOnce(selector, renderAsync, followupKey){
+  const existing = chatStream.querySelector(selector);
+  if (existing) {
+    // ✅ no little sayings on repeat clicks
+    requestAnimationFrame(() => scrollToBubbleTop(existing));
+    return existing;
   }
+  const el = await renderAsync();
+  if (selector.startsWith(".")) el?.classList?.add(selector.slice(1));
+  markSeenFromEl(el);
+  return el;
+}
 
   // ===================================================================
   // Streaming chat (freeform) — server routes; client renders once
@@ -1098,8 +1113,15 @@ function initCertLightbox() {
 
     // ---- local intents / follow-ups (no server call) ----
     const asksIdentity = /\b(what\s*are\s*you|what\s*r\s*u|are\s*you\s*a\s*bot|who\s*(made|built)\s*you|who\s*are\s*you|who\s*r\s*u)\b/.test(ql);
-    const asksAbout    = /\b(about|introduce|bio|yourself|profile|summary)\b/.test(ql) ||
-                         /\b(hi|hello|hey|hiya|morning|evening)\b/.test(ql);
+    const asksAbout =
+      // greetings still count
+      /\b(hi|hello|hey|hiya|morning|evening)\b/.test(ql) ||
+
+      // only treat "about" as ABOUT ME when it's clearly about you
+      /\b(about\s+(you|yourself|kareena)|introduce\s+yourself|your\s+bio|profile\s+summary)\b/.test(ql) ||
+
+      // also handle short “about” style prompts
+      (ql === "about" || ql === "about me");
     const asksProjects = /\b(project|projects)\b/.test(ql);
     const asksSkills   = /\b(skill|skills|framework|frameworks)\b/.test(ql);
     const asksContact  = /\b(contact|reach|email|e-?mail|linkedin|link\s*edin|connect)\b/.test(ql);
@@ -1117,8 +1139,15 @@ function initCertLightbox() {
       }
     }
 
-    // About / Identity — render once, otherwise varied follow-up
-    if (asksIdentity || asksAbout) {
+    // Identity — always answer "who are you" as identity (not about-follow)
+    if (asksIdentity) {
+      microReply(pickPhrase("identity"));
+      __askInflight = false;
+      return;
+    }
+
+    // About — render once, otherwise follow-up
+    if (asksAbout) {
       if (alreadyShown(".about-wrap")) {
         microReply(pickPhrase("about_follow"));
         lastPrompt = "about-follow";
@@ -1249,11 +1278,15 @@ function initCertLightbox() {
 
       // stream finished: swap in final formatted HTML once
       try { typing?.remove(); } catch {}
-      if (ai) {
-        ai.classList.remove("streaming");
+    if (ai) {
+      typer?.stop();
+      ai.classList.remove("streaming");
+
+      requestAnimationFrame(() => {
         ai.innerHTML = buffer;
         if (!__suppressScroll) scrollToBottom();
-      }
+      });
+    }
 
     } catch (e) {
       const fb = await fallbackChat(q);

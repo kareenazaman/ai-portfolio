@@ -182,7 +182,7 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         )
         return True, f"<p>{msg}</p>"
 
-    reaction_patterns = {"lol", "haha", "hehe", "lmao", "lmfao", "😂", "🤣", "😭", "😆"}
+    reaction_patterns = {"lol", "Haha", "Hehe", "Lmao", "Lmfao", "😂", "🤣", "😭", "😆"}
 
     if clean2 in reaction_patterns or any(e in q_lower for e in ("😂", "🤣", "😭", "😆")):
         msg = _pick_nonrepeating_session(
@@ -211,9 +211,9 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         "who is this", "who dis", "do u know kareena", "do you know kareena"
     ]):
         responses = [
-            "<p>I’m Kareena’s AI version 🤖 I talk in first person, but everything I say is about my real work, skills, and experience.</p>",
+            "<p>I’m Kareena’s AI version 🤖 I talk as her, everything I say is about my real work, skills, and experience.</p>",
             "<p>I’m basically a digital Kareena — this little bot exists just to walk you through my projects, skills, and background.</p>",
-            "<p>Think of me as Kareena’s portfolio twin. I can tell you about what I build, what I study, and how to contact me.</p>",
+            "<p>Think of me as Kareena’s AI twin. I can tell you about what I build, what I study, and how to contact me.</p>",
         ]
         return True, random.choice(responses)
 
@@ -248,12 +248,19 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         "are you bangladeshi", "are u bangladeshi",
         "are you from bd", "r u from bd",
         "originally from bangladesh", "your origin", "where are your roots",
-        "were you born in bangladesh", "from bangladesh?"
+        "were you born in bangladesh", "from bangladesh?",
+        "where were u born", "where were you born"
     ]):
-        return True, (
-            "<p>Yes — I’m originally from Bangladesh 🇧🇩</p>"
-            "<p>Now I live in Kamloops, BC, Canada, where I’m studying Computer Science.</p>"
-        )
+        responses = [
+            "<p>I was born in Bangladesh 🇧🇩 and later moved to Canada. I’m currently based in Kamloops, BC studying Computer Science.</p>",
+            "<p>I’m originally from Bangladesh 🇧🇩, but I now live in British Columbia, Canada where I’m pursuing my CS degree.</p>",
+            "<p>My roots are in Bangladesh 🇧🇩 — that’s where I was born. Now I’m building my tech journey in Canada 🇨🇦.</p>",
+            "<p>Born in Bangladesh 🇧🇩, now living in Canada 🇨🇦 as a Computer Science student.</p>",
+            "<p>I was born in Bangladesh 🇧🇩, and today I’m based in Kamloops, BC focusing on software and AI projects.</p>",
+            "<p>Bangladesh is where I’m from originally 🇧🇩 — but Canada is where I’m currently studying and building my career in tech.</p>",
+        ]
+
+        return True, random.choice(responses)
 
     # ---------- 3) “Are you Kareena?” ----------
     if any(phrase in q_lower for phrase in [
@@ -265,6 +272,14 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
             "<p>Close enough 😄 I’m Kareena’s AI version, trained just to talk about my work, skills, and journey.</p>",
         ]
         return True, random.choice(responses)
+
+    # --- Category: AI capability questions ---
+    if any(word in q_lower for word in [
+        "are you chatgpt", "are you ai", "real person", "human", "are u chatgpt", "r u chatgpt",
+    ]):
+        return True, (
+            "<p>I’m Kareena’s AI assistant, created to help walk you through her professional experience and portfolio — and no, I’m not ChatGPT 😄</p>"
+        )
 
     # ---------- 4) Age questions ----------
     if "how old" in q_lower or re.search(r"\bage\b", q_lower):
@@ -291,9 +306,29 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         "bad bot", "you suck", "u suck", "rude", "mean", "idiot"
     ]):
         responses = [
-            "<p>Ouch 😂 I’ll take that as feedback. I’m still just a small portfolio bot trying to be helpful.</p>",
-            "<p>Harsh, but noted 😅 If you tell me what you were actually hoping for, I can try again.</p>",
-            "<p>Okay, that one stung a bit 😂 Let me know what you wanted to see about my work and I’ll focus on that.</p>",
+            "<p>Ouch 😂 I’m just here trying to help you explore my professional work. Let me know what you’d like to find out.</p>",
+            "<p>Harsh, but noted 😅 I’m here to help you learn more about my professional experience — what were you looking for?</p>",
+            "<p>Okay, that one stung a bit 😂 Is there something specific about my professional life you wanted to see?</p>",
+            "<p>Got it 😄 I’m just trying to help showcase my work — tell me what you’d like to know.</p>",
+            "<p>No worries 😅 If there’s anything you’d like to find out about my background or projects, I can help with that.</p>",
+            "<p>Feedback received 😂 I’m here to help you explore my skills and experience — what can I show you?</p>",
+            "<p>I promise I’m trying to be helpful 😄 What would you like to know about my professional journey?</p>"
+        ]
+        return True, random.choice(responses)
+
+    # ---------- 7) Inappropriate language ----------
+    if any(word in q_lower for word in [
+        "fuck", "fucking", "shit", "bitch", "asshole",
+        "bastard", "wtf", "stfu", "slut", "shut the fuck up", "disgusting"
+    ]):
+        responses = [
+            "<p>Let’s keep the conversation respectful. I’m here to help you learn about my professional work.</p>",
+            "<p>I can’t engage with inappropriate language. Feel free to ask about my experience or projects instead.</p>",
+            "<p>Please keep things professional. I’m happy to help if you’d like to explore my portfolio.</p>",
+            "<p>I’m here to discuss my professional background and work — let’s keep it appropriate.</p>",
+            "<p>If you have questions about my skills, experience, or projects, I’d be glad to help.</p>",
+            "<p>I’m designed to assist with information about my professional life. Let’s keep the discussion respectful.</p>"
+            "<p>I'm sorry that's a bit inappropriate to say to someone.</p>"
         ]
         return True, random.choice(responses)
 
@@ -307,6 +342,23 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
             "<p>Anytime! If there’s anything else you’re curious about in my portfolio, just ask.</p>",
         ]
         return True, random.choice(responses)
+
+    # ---------- 7B) "You're funny" / playful compliments ----------
+    FUNNY_PATTERNS = (
+        "you are funny", "you're funny", "youre funny",
+        "u r funny", "ur funny", "u funny", "funny lol"
+    )
+
+    if any(p in q_lower for p in FUNNY_PATTERNS):
+        msg = _pick_nonrepeating_session(
+            "compliment_funny",
+            [
+                "Aww thank you 😄 I try! Let me know if you're curious about anything else in my portfolio",
+                "Hehe thanks 😂 If you want, ask me about a project — I’ll keep it quick and clear.",
+                "Thank youuu 😌 I'm nicely trained on various aspects of this portfolio too!",
+            ],
+        )
+        return True, f"<p>{msg}</p>"
 
     # ---------- 7) Compliments / positive reactions ----------
     if any(word in q_lower for word in [
@@ -344,10 +396,11 @@ def get_smart_refusal(question: str) -> str:
         return (
             "<p>I’m only set up to talk about my portfolio, not live data like weather, news, or stock prices.</p>"
             "<p>If you want, I can walk you through my projects, tech stack, or studies instead.</p>"
+            "<p>Actually I’m best suited to answer questions about my projects, skills, or experience.</p>"
         )
 
     # --- Category: jokes / games / entertainment ---
-    if any(word in q_lower for word in ["joke", "story", "game", "fun", "play", "bored"]):
+    if any(word in q_lower for word in ["joke", "story", "game", "play", "bored"]):
         return (
             "<p>I’m more of a “show you my work” bot than an entertainment bot 😄</p>"
             "<p>But if you’d like something interesting, I can explain one of my projects in detail.</p>"
@@ -357,6 +410,7 @@ def get_smart_refusal(question: str) -> str:
     if any(word in q_lower for word in ["movie", "food", "music", "song", "book", "restaurant", "drink", "colour", "color"]):
         return (
             "<p>I don’t really keep personal favourites in this portfolio.</p>"
+            "<p>I'm only trained to talk about me professional like 😅</p>"
             "<p>This space is mainly about what I build, the tools I use, and what I’m learning.</p>"
         )
 
@@ -391,10 +445,7 @@ RESPONSE_BANK = {
             ),
         ],
         "repeat": [
-            "<p>You already know the basics about me — want to dive into a specific project or skill?</p>",
-            "<p>We’ve done the intro part. What would you like next — projects, studies, or experience?</p>",
-            "<p>Still me 😊 Ask about anything specific: a project, tool, or part of my journey.</p>",
-            "<p>You've got my background. Now we can go deeper into my work, skills, or goals.</p>",
+            ""
         ],
     },
 
@@ -405,10 +456,7 @@ RESPONSE_BANK = {
             "<p>These are the main things I’ve built recently:</p><div class='projects-gallery'></div>",
         ],
         "repeat": [
-            "<p>My projects are already shown above — tap a card or ask about one by name.</p>",
-            "<p>Projects are up there ☝️ You can say things like “tell me about your AI portfolio” or “explain SiteGuardian”.</p>",
-            "<p>Projects are open. Pick one that looks interesting, or I can explain one if you name it.</p>",
-            "<p>You've seen my projects. Ask for details on any one and I’ll walk you through it.</p>",
+            ""
         ],
     },
 
@@ -419,9 +467,7 @@ RESPONSE_BANK = {
             "<p>These are the languages and frameworks I’m most comfortable with:</p><div class='skills-wrap'></div>",
         ],
         "repeat": [
-            "<p>My skills are already displayed — ask about a specific one if you want more detail.</p>",
-            "<p>You’ve seen my tech stack. Curious how I’ve used any of those in real projects?</p>",
-            "<p>Skills are up there ☝️ You can ask things like “how do you use Flask?” or “what have you built with Android?”.</p>",
+            ""
         ],
     },
 
@@ -439,9 +485,7 @@ RESPONSE_BANK = {
             ),
         ],
         "repeat": [
-            "<p>Same contact details as before — email me at <b>kareenazaman@gmail.com</b> or reach out on LinkedIn.</p>",
-            "<p>My email and LinkedIn haven’t changed. Feel free to use whichever you prefer.</p>",
-            "<p>You can still contact me via email or LinkedIn — whatever feels easier for you.</p>",
+            ""
         ],
     },
 
@@ -641,65 +685,39 @@ def format_text_to_html(text: str) -> str:
     if not text:
         return ""
 
-    # 1) Normalize line breaks + turn inline "- ..." into real lines
-    t = str(text).replace("\r\n", "\n").replace("\r", "\n")
+    t = str(text).replace("\r\n", "\n").replace("\r", "\n").strip()
 
-    # If content is coming in as: "- a - b - c" on one line,
-    # split it into separate lines so each becomes its own <li> / <p>
-    t = re.sub(r"\s-\s(?=\*\*|[A-Za-z0-9])", "\n- ", t)
+    # --- Turn inline separators into real bullet lines ---
+    # 1) " ... - Heading"  -> "\n- Heading"
+    t = re.sub(r"\s-\s+(?=[A-Z])", "\n- ", t)
 
-    lines = [line.strip() for line in t.split("\n") if line.strip()]
-    html_lines = []
-    in_list = False
+    # 2) "React-Heading" or "CSS- Heading" -> "\n- Heading"
+    #    (no space before '-', optional spaces after)
+    t = re.sub(r"(?<=\S)-\s*(?=[A-Z])", "\n- ", t)
+
+    # --- Split into lines ---
+    lines = [ln.strip() for ln in t.split("\n") if ln.strip()]
+
+    html_parts = []
+    lis = []
 
     for line in lines:
-        # Bold (**text**)
+        # **bold**
         line = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", line)
 
-        # Bullet points
         if line.startswith("- "):
-            html_lines.append(f"<li>{line[2:].strip()}</li>")
+            lis.append(f"<li>{line[2:].strip()}</li>")
         else:
-            html_lines.append(f"<div class='ai-line'>{line}</div>")
+            # Treat "Backend:" / "Frontend:" like headings
+            if re.match(r"^[A-Za-z][A-Za-z &/]+:\s*$", line):
+                html_parts.append(f"<div class='ai-section-title'>{line[:-1].strip()}</div>")
+            else:
+                html_parts.append(f"<div class='ai-line'>{line}</div>")
 
-    # Wrap list items if any exist
-    if any(l.startswith("<li>") for l in html_lines):
-        lis = [l for l in html_lines if l.startswith("<li>")]
-        ps = [l for l in html_lines if not l.startswith("<li>")]
-        return "".join(ps) + "<ul>" + "".join(lis) + "</ul>"
+    if lis:
+        html_parts.append("<ul class='ai-list'>" + "".join(lis) + "</ul>")
 
-    return "".join(html_lines)
-
-
-def format_heading_blocks_to_html(text: str) -> str:
-    if not text:
-        return ""
-
-    t = str(text)
-
-    # 1️⃣ Normalize newlines
-    t = t.replace("\r\n", "\n").replace("\r", "\n")
-
-    # 2️⃣ FIX broken markdown like:
-    # "**Frameworks &\nPlatforms:**"
-    t = re.sub(r"\*\*\s*([A-Za-z &/]+)\s*\n\s*([A-Za-z &/]+)\s*\*\*",
-               r"**\1 \2**", t)
-
-    # 3️⃣ Convert **bold** → <strong>
-    t = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", t)
-
-    # 4️⃣ Split into logical lines
-    lines = [line.strip() for line in t.split("\n") if line.strip()]
-
-    html = []
-    for line in lines:
-        # Headings like "Languages:"
-        if re.match(r"^[A-Z][A-Za-z &/]+:", line):
-            html.append(f"<p><strong>{line}</strong></p>")
-        else:
-            html.append(f"<div class='ai-line'>{line}</div>")
-
-    return "".join(html)
+    return "".join(html_parts)
 
 
 
@@ -777,13 +795,13 @@ class KareenaQA:
             # exact match
             if proj_q in self.project_title_map:
                 d = self.project_title_map[proj_q]
-                return {"ok": True, "html": f"<p>{d['content']}</p>"}
+                return {"ok": True, "html": format_text_to_html(d["content"])}
 
             # loose match (handles “site guardian” vs “siteguardian”)
             pq = proj_q.replace(" ", "")
             for title_l, d in self.project_title_map.items():
                 if pq == title_l.replace(" ", "") or proj_q in title_l:
-                    return {"ok": True, "html": f"<p>{d['content']}</p>"}
+                    return {"ok": True, "html": format_text_to_html(d["content"])}
 
         # Recruiter / employer prompts (rotate answers)
         for key, patterns in EMPLOYER_PATTERNS.items():
@@ -836,12 +854,12 @@ class KareenaQA:
         if "build" in ql:
             section = extract_section(content, "What I Build")
             if section:
-                return {"ok": True, "html": format_heading_blocks_to_html(section)}
+                return {"ok": True, "html": format_text_to_html(section)}
 
         if any(k in ql for k in ("skill", "language", "tool", "tech")):
             section = extract_section(content, "Technical Skills")
             if section:
-                return {"ok": True, "html": format_heading_blocks_to_html(section)}
+                return {"ok": True, "html": format_text_to_html(section)}
 
         # Fallback: first paragraph only (no markdown dump)
         first_para = content.split("\n\n")[0]
