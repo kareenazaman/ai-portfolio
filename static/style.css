@@ -232,7 +232,7 @@ body.hero-animate:not(.chat-mode) #tiles {
     color: #3a3a3a;
 }
 @media (max-width:600px){
-  .chat-mode .ask-input{color: black;}
+  .chat-mode #ask-input { color: black; }
 }
 
 /* Landing page only (no chat-mode) */
@@ -581,7 +581,7 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 .bubble .about-title{
   font-size: 2.5rem;
   line-height: .95;
-  font-weight: 50%;
+  font-weight: 700; /* or 800 */
   letter-spacing: .5px;
   padding: 2rem;
   margin: 5rem;
@@ -651,7 +651,7 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 }
 
 
-.bubble .about-left {
+.bubble .about-left{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -672,12 +672,7 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
   object-fit: cover;
   box-shadow: 0 10px 24px rgba(0,0,0,.12);
 }
-.bubble .about-left {
-  display: flex;
-  flex-direction: column;
-  align-items: left;   /* center BC, Canada under your photo */
-  gap: 10px;
-}
+
 
 .bubble .about-copy.v2 { font-size: clamp(1rem, 2.1vw, 1.12rem); line-height: 1.75; }
 .bubble .about-loc--v2 { display:flex; align-items:center; gap:10px; margin-top: clamp(12px, 2.4vw, 18px); }
@@ -1256,7 +1251,7 @@ margin: 20px; }
 /* “Copied!” micro tooltip */
 .bubble .copy-btn.copied::after{
   content: "Copied!";
-  position: absolute;
+  position: relative; /* ✅ add */
   top: -26px;
   left: 50%;
   transform: translateX(-50%);
@@ -1284,7 +1279,6 @@ margin: 20px; }
 .bubble .linkedin-logo{
   width: 60px;
   height: auto;
-  size: 100px;
   opacity: .9;
   transition: transform .14s ease, opacity .14s ease, filter .14s ease;
   margin-top: 5%;
@@ -1340,14 +1334,28 @@ body.modal-open { overflow: hidden; }
 }
 
 /* Close button (more like the Apple examples, still minimal) */
-#project-modal .pm-close{
+.pm-close {
   position: absolute;
-  top: 12px; right: 12px;
-  width: 40px; height: 40px;
-  border: none; border-radius: 999px;
-  background: rgba(0,0,0,.10);
-  font-size: 22px; line-height: 40px;
+  top: 20px;
+  right: 20px;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #f0f0f0;
+
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;           /* 🔥 important */
+  padding: 0;               /* 🔥 remove default button padding */
+
   cursor: pointer;
+  border: none;
 }
 #project-modal .pm-close:hover { background: rgba(0,0,0,.16); }
 
@@ -1626,6 +1634,27 @@ body.modal-open { overflow: hidden; }
 .bubble.ai .ai-line{
   margin: 0 0 6px !important;       /* slightly tighter */
   line-height: 1.35;
+}
+
+.ai-section-title {
+  font-weight: 700;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.ai-list {
+  margin: 0 0 10px 18px;
+  padding: 0;
+}
+
+.ai-list li {
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.ai-line {
+  margin-bottom: 6px;
 }
 
 
