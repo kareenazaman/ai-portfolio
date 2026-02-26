@@ -592,11 +592,62 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 .bubble .about-flag { font-size: 1.05em; vertical-align: -1px; }
 
 .bubble .about-photo {
-  width: 80%;
+  width: min(320px, 92%);
   aspect-ratio: 4 / 5;
   border-radius: 18px;
   object-fit: cover;
   box-shadow: 0 10px 24px rgba(0,0,0,.12);
+}
+
+/* Base row style (works for both desktop + mobile versions) */
+.about-photo-row{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  max-width: 340px;      /* keeps it from taking over */
+  overflow: visible;
+}
+
+.about-photo-row img{
+  width: 100%;
+  height: 150px;         /* key: stops the “too tall” problem */
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+
+/* Hover only on devices that actually have hover */
+@media (hover:hover) and (pointer:fine) {
+
+  .about-photo-row img {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .about-photo-row img:hover {
+    transform: scale(2.5);   /* small but noticeable */
+    box-shadow: 0 16px 30px rgba(0,0,0,0.15);
+    z-index: 2;
+    position: relative;
+  }
+
+}
+
+/* ✅ Default: mobile layout shows the row under paragraph */
+.about-photo-row--desktop { display: none; }
+.about-photo-row--mobile  { display: grid; margin: 12px 0 18px; }
+
+/* ✅ Desktop: show under main photo, hide the one under paragraph */
+@media (min-width: 901px) {
+  .about-photo-row--desktop { display: grid; justify-self: center; }
+  .about-photo-row--mobile  { display: none; }
+
+  .about-photo-row{
+    max-width: 260px;   /* was too tiny before */
+  }
+  .about-photo-row img{
+    height: 150px;      /* bigger than before */
+  }
 }
 
 /* location row */
@@ -666,7 +717,8 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 
 @media (max-width: 760px) { .bubble .about-hero--v2 { grid-template-columns: 1fr; } }
 .bubble .about-photo.v2 {
-  width: 100%;
+  width: 90%;
+  max-width: 260px;
   aspect-ratio: 4/5;
   border-radius: 18px;
   object-fit: cover;
@@ -1512,11 +1564,15 @@ body.modal-open { overflow: hidden; }
 
 /* --- Mobile only Landing page (not chat-mode): stack tiles 1 per row --- */
 @media (max-width: 650px) {
+  body:not(.chat-mode) #tiles {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
   body:not(.chat-mode) #tiles .feature-grid {
-    grid-template-columns: 1fr; /* one per row */
+    grid-template-columns: 1fr;
     gap: 0.8rem;
-    margin-top: 0.2%;
-
+    margin: 0 auto;
+    max-width: 420px;       /* 👈 prevents full width stretch */
   }
 
   .chat-mode .chat-stream {
@@ -1528,14 +1584,15 @@ body.modal-open { overflow: hidden; }
 }
 
   body:not(.chat-mode) .feature-tile{
-    border-radius: 50px;
+    border-radius: 28px;
 
   }
 
-  body:not(.chat-mode) .ask-box {
-    max-width: 400px;
-    margin: 0.5rem auto 0.5rem;
-  }
+body:not(.chat-mode) .ask-box {
+  max-width: 400px;
+  margin: 0.5rem auto 0.5rem;
+  padding: 8px;
+}
 
   /* Mobile typography adjustments */
   #hero h1 {
@@ -1550,6 +1607,19 @@ body.modal-open { overflow: hidden; }
   .container.section,
   .chat-area,
   .projects-gallery { max-width: 400px; margin-left: auto; margin-right: auto; }
+
+    /* Center the whole chat container */
+  .chat-mode .chat-wrapper {
+    width: 94%;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  /* Optional: reduce inner padding so it doesn't feel bulky */
+  .chat-mode .chat-stream {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 
 /* --- Chat mode (mobile): tiles fixed inside glass bar (no scroll) --- */
 .chat-mode #tiles.tiles-compact .feature-grid {
@@ -1598,15 +1668,23 @@ body.modal-open { overflow: hidden; }
 }
 
 
+  .about-photo.v2{
+    width: 100%;          /* smaller than full width */
+    max-width: 260px;    /* hard limit */
+    margin: 0 auto;      /* center it */
+    border-radius: 20px;
+    height: 280px;
+  }
 
-.bubble .about-photo {
-  width: 80%;
-  aspect-ratio: 1 / 2;
-  border-radius: 18px;
-  object-fit: cover;
-  box-shadow: 0 10px 24px rgba(0,0,0,.12);
+  .about-layout{
+    grid-template-columns: 1fr;
+  }
+
+  .about-photo-row{
+    max-width: 360px;
+  }
 }
-}
+
 /* small phones: make tiles a hair smaller */
 @media (max-width: 380px){
   .chat-mode #tiles.tiles-compact .feature-tile{

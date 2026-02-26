@@ -511,7 +511,8 @@ function addAiBubble(html = "") {
         <h1 class="about-title v2">ABOUT ME</h1>
         <section class="about-card about-v2">
 
-          <div class="about-hero about-hero--v2">
+        <div class="about-hero about-hero--v2">
+
           <!-- LEFT COLUMN: photo + location -->
           <div class="about-left">
             <img class="about-photo v2" src="${photo}" alt="Kareena Zaman portrait">
@@ -521,6 +522,12 @@ function addAiBubble(html = "") {
               <div class="loc-text">
                 <div class="loc-country">${city}, ${country}</div>
               </div>
+            </div>
+
+            <!-- ✅ DESKTOP version (under main photo + location) -->
+            <div class="about-photo-row about-photo-row--desktop">
+              <img src="/static/images/presentation.jpg" alt="Kareena presenting">
+              <img src="/static/images/nasa-spaceapps.jpg" alt="NASA Space Apps project">
             </div>
           </div>
 
@@ -533,15 +540,21 @@ function addAiBubble(html = "") {
               I build software, mobile apps, and AI tools that make everyday tasks simpler, from Python & Flask APIs to full-stack projects.
             </p>
             <br>
+            <!-- ✅ MOBILE version (right after first paragraph) -->
+            <div class="about-photo-row about-photo-row--mobile">
+              <img src="/static/images/presentation.jpg" alt="Kareena presenting">
+              <img src="/static/images/nasa-spaceapps.jpg" alt="NASA Space Apps project">
+            </div>
             <p>
               I’ve also participated in <b>various hackathons and competitions</b>, which helped me
               improve my teamwork and problem-solving abilities while gaining hands-on experience.
             </p>
             <br>
             <p>
-            I’m passionate about clean design, intuitive user experiences, and practical automation. I love turning ideas into real products and hope to inspire more girls to pursue <b>STEM</b> ✨
+              I’m passionate about clean design, intuitive user experiences, and practical automation. I love turning ideas into real products and hope to inspire more girls to pursue <b>STEM</b> ✨
             </p>
           </div>
+
         </div>
 
         </section>

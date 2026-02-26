@@ -188,11 +188,11 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         msg = _pick_nonrepeating_session(
             "smalltalk_react",
             [
-                "😂 haha",
-                "hahaha",
-                "hehe 😄",
+                "😂 Haha",
+                "Haha",
+                "Hehe 😄",
                 "lol glad that made you smile 😆",
-                "hehe", "😁", "🤭"
+                "Hehe", "😁", "🤭"
             ],
         )
         return True, f"<p>{msg}</p>"
