@@ -1740,6 +1740,27 @@ body.modal-open { overflow: hidden; }
   margin-bottom: 6px;
 }
 
+/* Landing hero ask box width = tiles width on mobile */
+@media (max-width: 650px) {
+
+  /* ✅ match the same cap as your mobile tiles grid */
+  body:not(.chat-mode) #ask-top.ask-holder{
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  /* ✅ ask-box fills the holder (so it aligns exactly) */
+  body:not(.chat-mode) #ask-top .ask-box{
+    width: 100%;
+    max-width: none;   /* override your 450/500 max-width */
+    margin: 0.5rem 0;
+  }
+}
+
 
 
 
