@@ -49,7 +49,7 @@ JUDGMENT_PATTERNS = {
     "smart": [
         "is kareena smart", "is she smart",
         "are you smart", "are u smart",
-        "is kareena intelligent", "is she intelligent"
+        "is kareena intelligent", "is she intelligent", "u must be smart", "kareena must be smart"
     ]
 }
 
@@ -61,3 +61,4 @@ JUDGMENT_ANSWERS = {
         "She’s a strong problem-solver. The clearest evidence is her portfolio and how she iterates on real projects."
     ]
 }
+

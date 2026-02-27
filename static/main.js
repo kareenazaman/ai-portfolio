@@ -526,8 +526,8 @@ function addAiBubble(html = "") {
 
             <!-- ✅ DESKTOP version (under main photo + location) -->
             <div class="about-photo-row about-photo-row--desktop">
-              <img src="/static/images/presentation.jpg" alt="Kareena presenting">
-              <img src="/static/images/nasa-spaceapps.jpg" alt="NASA Space Apps project">
+              <img src="/static/images/presentation.png" alt="Kareena presenting">
+              <img src="/static/images/nasa-spaceapps.png" alt="NASA Space Apps project">
             </div>
           </div>
 
@@ -542,8 +542,8 @@ function addAiBubble(html = "") {
             <br>
             <!-- ✅ MOBILE version (right after first paragraph) -->
             <div class="about-photo-row about-photo-row--mobile">
-              <img src="/static/images/presentation.jpg" alt="Kareena presenting">
-              <img src="/static/images/nasa-spaceapps.jpg" alt="NASA Space Apps project">
+              <img src="/static/images/presentation.png" alt="Kareena presenting">
+              <img src="/static/images/nasa-spaceapps.png" alt="NASA Space Apps project">
             </div>
             <p>
               I’ve also participated in <b>various hackathons and competitions</b>, which helped me

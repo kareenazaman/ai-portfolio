@@ -124,6 +124,8 @@ def build_corpus_from_portfolio() -> List[Dict[str, Any]]:
     return corpus
 
 
+
+
 # ============================================================
 # Smart handling for casual / off-topic / personality questions
 # ============================================================
@@ -367,7 +369,16 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         return True, f"<p>{msg}</p>"
 
     # ---------- 7) Compliments / positive reactions ----------
-    if any(word in q_lower for word in [
+    q_norm = " ".join((q_lower or "").split())  # collapse multiple spaces
+
+    is_question = (
+            "?" in q_norm or
+            q_norm.startswith(("are ", "is ", "do ", "did ", "can ", "could ", "would ", "will ",
+                               "what ", "why ", "how ", "where ", "when ")) or
+            q_norm.startswith(("r u ", "r you ", "r ur "))
+    )
+
+    if (not is_question) and any(word in q_norm for word in [
         "cool", "nice", "good", "awesome", "great", "impressive",
         "love this", "love it", "so clean", "beautiful", "pretty", "cute",
         "nice portfolio", "good portfolio", "amazing", "wow", "smart"
@@ -377,6 +388,32 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
             "<p>Thank youuu! Let me know if I can guide you to something else related to my portfolio :)</p>",
             "<p>Thanks! If you’re curious about anything else, ask me.</p>",
         ]
+        return True, random.choice(responses)
+
+    # ---------- Resume / CV requests ----------
+    if any(phrase in q_lower for phrase in [
+        "can i see your resume", "can i see ur resume",
+        "show your resume", "show ur resume",
+        "your resume", "ur resume", "resume?",
+        "can i see your cv", "can i see ur cv",
+        "show your cv", "show ur cv",
+        "your cv", "ur cv", "cv?",
+        "download resume", "resume link", "cv link"
+    ]):
+        responses = [
+            "<p>My resume contains some private details, so I don’t post it publicly.</p>"
+            "<p>If you’d like a copy, please email me at <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> and I’ll send it right away 😊</p>",
+
+            "<p>I keep my resume private (it has personal contact info).</p>"
+            "<p>Email me at <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> and I’ll share the latest version 😊</p>",
+
+            "<p>I don’t host my resume publicly for privacy reasons.</p>"
+            "<p>Just send me a quick email at <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> and I’ll forward it 😊</p>",
+
+            "<p>Yep — I can share my resume, I just don’t post it online 😊</p>"
+            "<p>Please email <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> and I’ll send it over.</p>",
+        ]
+
         return True, random.choice(responses)
 
     # ---------- Nothing matched ----------
@@ -400,9 +437,8 @@ def get_smart_refusal(question: str) -> str:
     # --- Category: general info (weather / news / stocks / sports) ---
     if any(word in q_lower for word in ["weather", "time", "news", "stock", "stocks", "sports", "score"]):
         return (
-            "<p>I’m only set up to talk about my portfolio, not live data like weather, news, or stock prices.</p>"
+            "<p>I’m only set up to talk about my portfolio, not live data like weather, time, news, or stock prices.</p>"
             "<p>If you want, I can walk you through my projects, tech stack, or studies instead.</p>"
-            "<p>Actually I’m best suited to answer questions about my projects, skills, or experience.</p>"
         )
 
     # --- Category: jokes / games / entertainment ---
@@ -416,7 +452,7 @@ def get_smart_refusal(question: str) -> str:
     if any(word in q_lower for word in ["movie", "food", "music", "song", "book", "restaurant", "drink", "colour", "color"]):
         return (
             "<p>I don’t really keep personal favourites in this portfolio.</p>"
-            "<p>I'm only trained to talk about me professional like 😅</p>"
+            "<p>I'm only trained to talk about me professional life 😅</p>"
             "<p>This space is mainly about what I build, the tools I use, and what I’m learning.</p>"
         )
 
