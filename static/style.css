@@ -607,14 +607,16 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
   margin-top: 10px;
   max-width: 340px;      /* keeps it from taking over */
   overflow: visible;
+  position: relative;
+  z-index: 1;
 }
-
 .about-photo-row img{
   width: 100%;
   height: 150px;         /* key: stops the “too tall” problem */
   object-fit: cover;
   border-radius: 16px;
   box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  transform: translateZ(0);
 }
 
 /* Hover only on devices that actually have hover */
@@ -638,7 +640,7 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 .about-photo-row--mobile  { display: grid; margin: 12px 0 18px; }
 
 /* ✅ Desktop: show under main photo, hide the one under paragraph */
-@media (min-width: 901px) {
+@media (min-width: 761px) {
   .about-photo-row--desktop { display: grid; justify-self: center; }
   .about-photo-row--mobile  { display: none; }
 
@@ -1588,11 +1590,14 @@ body.modal-open { overflow: hidden; }
 
   }
 
-body:not(.chat-mode) .ask-box {
-  max-width: 400px;
-  margin: 0.5rem auto 0.5rem;
-  padding: 8px;
-}
+  body:not(.chat-mode) .ask-box {
+    width: 100%;
+    max-width: 420px;     /* SAME as your feature grid */
+    margin: 0.5rem auto;
+    padding: 8px;
+  }
+
+
 
   /* Mobile typography adjustments */
   #hero h1 {
