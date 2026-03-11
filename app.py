@@ -11,8 +11,6 @@ from pathlib import Path
 import os, json, yaml, html, time, random
 from typing import List, Dict, Any
 import re
-from autocorrect import Speller
-spell = Speller(lang='en')
 
 # ML deps
 import joblib
