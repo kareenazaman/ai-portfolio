@@ -604,6 +604,23 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         ]
         return True, random.choice(responses)
 
+    # ---------- Business / Freelance Inquiries ----------
+    if any(phrase in q_lower for phrase in [
+            "hire you", "freelance", "build a website", "make a website",
+            "build an app", "make an app", "for my business", "for a business",
+            "taking clients", "open to work", "can you build", "make me a",
+            "create a website", "create an app", "agency"
+        ]):
+            msg = _pick_nonrepeating_session(
+                "business_freelance",
+                [
+                    "I’m always open to discussing freelance projects! 😊 If you have a website or app in mind for your business, send me the details at <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> and we can chat.",
+                    "I do take on freelance work. Shoot me an email at <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a> with what you're looking to build!",
+                    "I'd love to hear about your business idea! The best way to reach me for freelance work is by emailing <a href='mailto:kareenazaman@gmail.com'>kareenazaman@gmail.com</a>."
+                ]
+            )
+            return True, f"<p>{msg}</p>"
+
     return False, ""
 
 
