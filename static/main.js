@@ -690,7 +690,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>
               Hey 👋 I’m <b>Kareena Zaman</b>, a <b>Computer Science student</b> at Thompson Rivers
               University in Canada, originally from Bangladesh <span class="about-flag">🇧🇩</span>,
-              and an <b>Assistant Manager</b> at Suzanne’s clothing store because I love fashion as much as tech.
+              and an <b>Interim Manager</b> at Suzanne’s clothing store because I love fashion as much as tech.
               I build software, mobile apps, and AI tools that make everyday tasks simpler, from Python & Flask APIs to full-stack projects.
             </p>
             <br>
@@ -1094,7 +1094,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <span>Leadership &amp; Collaboration</span>
             </div>
             <div class="skills-expertise-chips">
-                <span class="skills-chip">Assistant Manager experience</span>
+                <span class="skills-chip">Interim Manager experience</span>
                 <span class="skills-chip">Technical team leadership (hackathons)</span>
                 <span class="skills-chip">Cross-functional collaboration</span>
                 <span class="skills-chip">Agile teamwork & sprint planning</span>

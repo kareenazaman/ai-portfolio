@@ -747,7 +747,7 @@ RESPONSE_BANK = {
         "first": [
             (
                 "<p>A bit about me personally: I’m originally from Bangladesh 🇧🇩 and now living in BC, Canada. "
-                "I balance studying Computer Science, working as an Assistant Manager in retail, and building software projects I care about.</p>"
+                "I balance studying Computer Science, working as an Interim Manager in retail, and building software projects I care about.</p>"
             ),
             (
                 "<p>Personally, I’m a mix of tech, creativity, and a little bit of chaos in between 😄 "
@@ -809,11 +809,11 @@ RESPONSE_BANK = {
         "first": [
             (
                 "<p>My experience is a mix of technical and real-world: I’ve built Android apps, Flask APIs, and ML models, "
-                "and I work as an Assistant Manager at Suzanne’s where I handle leadership, operations, and problem-solving every day.</p>"
+                "and I work as an Interim Manager at Suzanne’s where I handle leadership, operations, and problem-solving every day.</p>"
             ),
             (
                 "<p>On the tech side, I’ve worked on AI tools, Android apps, and full-stack projects. "
-                "On the people side, I’ve led teams and managed a clothing store as an Assistant Manager.</p>"
+                "On the people side, I’ve led teams and managed a clothing store as an Interim Manager.</p>"
             ),
         ],
         "repeat": [
