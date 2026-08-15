@@ -382,7 +382,9 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         return True, random.choice(RESPONSE_BANK["farewell"])
 
     # ---------- "Who / what are you?" ----------
-    if any(phrase in q_lower for phrase in [
+    # Word-boundary match so "what are you" doesn't false-positive on
+    # "what are your skills" (plain substring matching did).
+    if any(re.search(rf"\b{re.escape(phrase)}\b", q_lower) for phrase in [
         "who are you", "who r u", "who are u", "who r you",
         "what are you", "what r u", "what r you",
         "who is this", "who dis", "do u know kareena", "do you know kareena"
@@ -786,20 +788,20 @@ RESPONSE_BANK = {
         ],
     },
 
-    "study": {
+    "education": {
         "first": [
             (
-                "<p>I study Computer Science at Thompson Rivers University. "
+                "<p>I study Computer Science at Thompson Rivers University (TRU) in Kamloops, BC. "
                 "My interests include software development, Android apps, AI/ML, and backend systems.</p>"
             ),
             (
-                "<p>I’m doing my BSc in Computer Science at TRU. I’ve taken courses on data structures, algorithms, mobile dev, "
+                "<p>I’m doing my BSc in Computer Science at Thompson Rivers University, Kamloops. I’ve taken courses on data structures, algorithms, mobile dev, "
                 "networks & security, and more.</p>"
             ),
         ],
         "repeat": [
-            "<p>Still studying CS at TRU 😊 Want to know about courses, projects, or what I focus on?</p>",
-            "<p>Yep, Computer Science at TRU. Ask if you want specifics about what I’ve learned or built there.</p>",
+            "<p>Still studying CS at Thompson Rivers University in Kamloops 😊 Want to know about courses, projects, or what I focus on?</p>",
+            "<p>Yep, Computer Science at TRU, Kamloops. Ask if you want specifics about what I’ve learned or built there.</p>",
         ],
     },
 
@@ -1137,6 +1139,7 @@ def _sess():
         "contact": False,
         "identity": False,
         "origin": False,
+        "education": False,
     })
     s.setdefault("last_intent", None)
     s.setdefault("last_query", "")
