@@ -98,8 +98,12 @@ def load_kb_markdown() -> List[Dict[str, Any]]:
 def normalize_projects_to_text(proj: Dict[str, Any]) -> str:
     """Turns a project YAML entry into a clean, formatted block for chat."""
     title = proj.get("title", "")
+    category = proj.get("category", "")
+    status = proj.get("status", "")
     desc = proj.get("desc", "")
+    role = proj.get("role", "")
     stack = ", ".join((proj.get("stack", []) or []))
+    highlights = proj.get("highlights", []) or []
     links = proj.get("links", {}) or {}
     gh = links.get("github", "")
     dm = links.get("demo", "")
@@ -107,8 +111,14 @@ def normalize_projects_to_text(proj: Dict[str, Any]) -> str:
     parts = []
     if title:
         parts.append(f"**Project: {title}**")
+    if category:
+        parts.append(category)
+    if status == "in_progress":
+        parts.append("**Status:** In progress — I'm actively building this one right now.")
     if desc:
         parts.append(desc)
+    if role:
+        parts.append(f"**My Role:** {role}")
     if stack:
         parts.append(f"**Stack:** {stack}")
     if gh:
@@ -116,6 +126,9 @@ def normalize_projects_to_text(proj: Dict[str, Any]) -> str:
     if dm:
         parts.append(
             f"**Live Demo:** <a href='{dm}' target='_blank' style='text-decoration: underline;'>Visit Site</a>")
+    if highlights:
+        parts.append("**Highlights:**")
+        parts.extend(f"- {h}" for h in highlights)
 
     # Join with newlines so the HTML formatter creates distinct visual lines
     return "\n".join(p for p in parts if p).strip()
@@ -380,6 +393,29 @@ def handle_edge_case(question: str, qa_system=None) -> tuple[bool, str]:
         "talk to you later", "take care", "ttyl", "gotta go", "i have to go"
     ]):
         return True, random.choice(RESPONSE_BANK["farewell"])
+
+    # ---------- Currently working on / current project ----------
+    # Checked before the generic "who/what are you" block below so that
+    # "what are you working on/building" doesn't get swallowed by the
+    # "what are you" identity pattern.
+    if any(phrase in q_lower for phrase in [
+            "what are you working on", "what are u working on", "whats are you working on",
+            "what are you currently working on", "what are u currently working on",
+            "what are you building", "what are u building",
+            "what are you working on right now", "what are u working on right now",
+            "current project", "currently building", "working on now",
+            "building right now", "what's next", "whats next",
+            "next project", "upcoming project", "new project",
+            "what's your current project", "whats your current project",
+            "what are you working on these days", "any new projects",
+            "what are you creating", "what project are you on"
+        ]):
+        responses = [
+            "<p>Right now I’m building <strong>Reena</strong> — my personal AI assistant 🤖 It’s still in progress, but the goal is an assistant that actually knows my background, skills, and projects and can talk about them naturally.</p>",
+            "<p>I’m currently working on <strong>Reena</strong>, a personal AI assistant I’m building from scratch. It’s a work in progress right now, but you can check out the project card for it below 👇</p>",
+            "<p>My current project is <strong>Reena</strong> — a personal AI assistant. It’s still in progress, but I’m actively building it out!</p>",
+        ]
+        return True, random.choice(responses)
 
     # ---------- "Who / what are you?" ----------
     # Word-boundary match so "what are you" doesn't false-positive on
@@ -960,7 +996,60 @@ class KareenaQA:
                 self.project_docs.append(d)
                 self.project_title_map[title.lower()] = d
 
+        # Raw YAML fields (status, role, etc.) keyed by lowercase title —
+        # used for status-style questions ("is X done?") without re-parsing content.
+        self.project_raw_map = {
+            (p.get("title") or "").strip().lower(): p
+            for p in (load_yaml("projects.yml") or [])
+            if p.get("title")
+        }
+
         self._build_index()
+
+    def _match_project_title(self, phrase: str):
+        """Best-effort match of a free-text phrase to a known project title."""
+        phrase = (phrase or "").strip().lower().strip(" ?.!\"'")
+        if len(phrase) < 3:
+            return None
+        if phrase in self.project_title_map:
+            return phrase, self.project_title_map[phrase]
+
+        compact = phrase.replace(" ", "")
+        best = None
+        for title_l, d in self.project_title_map.items():
+            title_compact = title_l.replace(" ", "")
+            if compact == title_compact or title_l in phrase or phrase in title_l:
+                if best is None or len(title_l) > len(best[0]):
+                    best = (title_l, d)
+        return best
+
+    def _find_project_mention(self, ql: str):
+        """Find a project title mentioned anywhere in the query (for bare-name / status questions)."""
+        best = None
+        for title_l, d in self.project_title_map.items():
+            if len(title_l) >= 3 and title_l in ql:
+                if best is None or len(title_l) > len(best[0]):
+                    best = (title_l, d)
+        return best
+
+    COMPARE_PATTERNS = (
+        r"difference between (.+?) and (.+?)(?:\?|$)",
+        r"differences? between (.+?) and (.+?)(?:\?|$)",
+        r"compare (.+?) (?:and|to|with) (.+?)(?:\?|$)",
+        r"(.+?) vs\.? (.+?)(?:\?|$)",
+        r"(.+?) versus (.+?)(?:\?|$)",
+    )
+
+    def _find_compare_projects(self, ql: str):
+        for pat in self.COMPARE_PATTERNS:
+            m = re.search(pat, ql)
+            if not m:
+                continue
+            a = self._match_project_title(m.group(1))
+            b = self._match_project_title(m.group(2))
+            if a and b and a[0] != b[0]:
+                return a, b
+        return None
 
     def _build_index(self):
         INDEX_DIR.mkdir(exist_ok=True, parents=True)
@@ -1016,6 +1105,18 @@ class KareenaQA:
 
         ql = query.lower()
 
+        # "Compare X and Y" / "difference between X and Y" / "X vs Y" — works for any two projects
+        cmp_result = self._find_compare_projects(ql)
+        if cmp_result:
+            (_, doc_a), (_, doc_b) = cmp_result
+            html = (
+                f"<p>Good question — here's how <strong>{doc_a['title']}</strong> and "
+                f"<strong>{doc_b['title']}</strong> compare:</p>"
+                f"{format_text_to_html(doc_a['content'])}"
+                f"{format_text_to_html(doc_b['content'])}"
+            )
+            return {"ok": True, "html": html}
+
         # Force common "tech stack" questions to prefer skills chunks
         if any(w in ql for w in
                ("backend", "frontend", "tech stack", "stack", "tools", "framework", "database", "api")):
@@ -1065,6 +1166,29 @@ class KareenaQA:
             if any(p in ql for p in patterns):
                 msg = _pick_nonrepeating_session(f"judge_{key}", JUDGMENT_ANSWERS[key])
                 return {"ok": True, "html": f"<p>{msg}</p>"}
+
+        # Bare project name or status-style question ("reena", "is X done?", "can I try X?")
+        # Catches cases too short/generic for TF-IDF to clear its similarity threshold.
+        mention = self._find_project_mention(ql)
+        if mention:
+            title_l, d = mention
+            raw = self.project_raw_map.get(title_l, {})
+            status_hint = any(h in ql for h in (
+                "is done", "is finished", "finished?", "done?", "is ready", "ready?",
+                "can i try", "can i use", "when will", "when is", "how is", "hows",
+                "coming along", "still working on", "still building", "progress on",
+                "update on", "status of", "is it done", "is it ready", "is it live"
+            ))
+            if status_hint:
+                if raw.get("status") == "in_progress":
+                    msg = (
+                        f"<p><strong>{raw.get('title')}</strong> is still <strong>in progress</strong> — "
+                        f"I'm actively building it right now. Check the project card for the latest details!</p>"
+                    )
+                else:
+                    msg = f"<p><strong>{raw.get('title')}</strong> is finished! Check out the details below.</p>"
+                return {"ok": True, "html": msg}
+            return {"ok": True, "html": format_text_to_html(d["content"])}
 
         qv = self.vectorizer.transform([query])
         sims = cosine_similarity(qv, self.doc_mat)[0]

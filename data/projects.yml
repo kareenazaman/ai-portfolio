@@ -1,3 +1,28 @@
+- title: Reena
+  year: 2026
+  category: "Personal AI Assistant – In Progress"
+  status: in_progress
+  # image: /static/images/reena.jpg   # <- drop a dedicated Reena image here when ready (leave unset for now)
+  stack:
+    - Python
+    - Flask
+    - Machine Learning / NLP
+    - YAML / Markdown
+    - HTML / CSS / JavaScript
+  desc: >
+    <strong>Reena</strong> is my personal AI assistant — currently <strong>in progress</strong>.
+    The goal is an assistant that genuinely knows my background, skills, and projects, and can
+    talk about them naturally instead of giving generic, canned answers.
+
+    Reena builds on what I learned from earlier assistant projects, combining <strong>intent
+    classification</strong>, <strong>structured knowledge retrieval</strong>, and a more personal,
+    conversational voice. It's actively being developed, so features and behavior are evolving
+    as I build it out.
+  highlights:
+    - Actively in development — this card will update as Reena grows.
+    - Combines intent detection with grounded, portfolio-aware knowledge retrieval.
+    - Designed to sound like me, not a generic chatbot.
+
 - title: SiteGuardian
   year: 2024
   image: /static/images/siteguardian.jpg   # <- drop an image here (or keep a placeholder)

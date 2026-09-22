@@ -749,10 +749,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function projectCardHTML(p) {
-    const img   = (p.image || "/static/project-default.jpg");
     const stack = (p.stack || []).slice(0, 3);
+    const inProgress = p.status === "in_progress";
+    const hasImage = !!p.image;
+    const bgStyle = hasImage ? ` style="background-image:url('${p.image}')"` : "";
+    const cardClass = hasImage ? "project-card" : "project-card project-card--placeholder";
     return `
-      <article class="project-card" style="background-image:url('${img}')" data-key="${(p.title || "").toLowerCase()}">
+      <article class="${cardClass}"${bgStyle} data-key="${(p.title || "").toLowerCase()}">
+        ${!hasImage ? `<div class="project-card__placeholder-icon">🤖</div>` : ""}
+        ${inProgress ? `<div class="project-card__badge">In Progress</div>` : ""}
         <div class="project-card__content">
           <div class="project-card__eyebrow">Project</div>
           <div class="project-card__title">${p.title || "Untitled"}</div>
@@ -820,10 +825,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const tagsEl = modal.querySelector(".pm-tags");
     const gallery = project.gallery || [];
 
-    modal.querySelector(".pm-title").textContent   = project.title || "Project";
+    const inProgress = project.status === "in_progress";
+    modal.querySelector(".pm-title").innerHTML     = `${project.title || "Project"}${inProgress ? ` <span class="pm-status-badge">In Progress</span>` : ""}`;
     modal.querySelector(".pm-eyebrow").textContent = project.year || project.category || "—";
-    modal.querySelector(".pm-image").src           = project.image || "/static/project-default.jpg";
-    modal.querySelector(".pm-image").alt           = project.title || "Project image";
+    const pmImage = modal.querySelector(".pm-image");
+    if (project.image) {
+      pmImage.src = project.image;
+      pmImage.alt = project.title || "Project image";
+      pmImage.hidden = false;
+    } else {
+      pmImage.removeAttribute("src");
+      pmImage.hidden = true;
+    }
     modal.querySelector(".pm-desc").innerHTML      = project.desc ? `<p>${project.desc}</p>` : "";
 
     // NEW — build gallery section inside modal
