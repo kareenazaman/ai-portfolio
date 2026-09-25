@@ -17,7 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Your custom styles (lives in /static/style.css) -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=11">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ asset_v('style.css') }}">
 </head>
 <body class="bg-light hero-animate">
 
@@ -49,6 +49,6 @@
   </script>
 
 
-<script src="{{ url_for('static', filename='main.js') }}" defer></script>
+<script src="{{ url_for('static', filename='main.js') }}?v={{ asset_v('main.js') }}" defer></script>
 </body>
 </html>

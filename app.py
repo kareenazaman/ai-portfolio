@@ -42,6 +42,18 @@ app = Flask(
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
 
 
+@app.context_processor
+def inject_asset_version():
+    """Cache-busts static assets using each file's mtime so edits show up
+    without manually bumping a version number in the template."""
+    def asset_v(filename: str) -> int:
+        try:
+            return int((BASE_DIR / "static" / filename).stat().st_mtime)
+        except OSError:
+            return 0
+    return dict(asset_v=asset_v)
+
+
 def auto_align_words(text):
     shorthand = {
         "u": "you", "r": "are", "ur": "your", "urself": "yourself",
@@ -1032,6 +1044,24 @@ class KareenaQA:
                     best = (title_l, d)
         return best
 
+    def _project_flavor(self, raw: Dict[str, Any]) -> str:
+        """One concrete, project-specific detail (not boilerplate) for opinion-style replies.
+        Returns a lowercase-leading fragment (title stripped off the front) so it reads
+        naturally when embedded after "{title} is finished — {flavor}"."""
+        title = raw.get("title", "")
+        highlights = raw.get("highlights") or []
+        if highlights:
+            return str(highlights[0]).rstrip(". ")
+        desc = re.sub(r"<[^>]+>", "", raw.get("desc", "") or "").strip()
+        if desc:
+            first_sentence = re.split(r"(?<=[.!?])\s", desc)[0].rstrip(". ")
+            if title:
+                first_sentence = re.sub(
+                    rf"^{re.escape(title)}\s+is\s+", "", first_sentence, flags=re.IGNORECASE
+                )
+            return first_sentence
+        return raw.get("category", "") or ""
+
     COMPARE_PATTERNS = (
         r"difference between (.+?) and (.+?)(?:\?|$)",
         r"differences? between (.+?) and (.+?)(?:\?|$)",
@@ -1109,6 +1139,8 @@ class KareenaQA:
         cmp_result = self._find_compare_projects(ql)
         if cmp_result:
             (_, doc_a), (_, doc_b) = cmp_result
+            session["pf_last_compare"] = [doc_a["title"], doc_b["title"]]
+            session.modified = True
             html = (
                 f"<p>Good question — here's how <strong>{doc_a['title']}</strong> and "
                 f"<strong>{doc_b['title']}</strong> compare:</p>"
@@ -1117,9 +1149,14 @@ class KareenaQA:
             )
             return {"ok": True, "html": html}
 
-        # Force common "tech stack" questions to prefer skills chunks
-        if any(w in ql for w in
-               ("backend", "frontend", "tech stack", "stack", "tools", "framework", "database", "api")):
+        # Force common "tech stack" / "do you know X" questions to prefer skills chunks.
+        # Single-word skill lookups ("do you know python") otherwise score too low against
+        # the full corpus to clear the main threshold, even though they clearly belong here.
+        if any(w in ql for w in (
+                "backend", "frontend", "tech stack", "stack", "tools", "framework", "database", "api",
+                "do you know", "do you use", "have you used", "are you familiar",
+                "have experience", "worked with", "know how to use", "can you use", "familiar with"
+        )):
             best_sk = None
             best_sk_score = -1.0
 
@@ -1173,6 +1210,54 @@ class KareenaQA:
         if mention:
             title_l, d = mention
             raw = self.project_raw_map.get(title_l, {})
+
+            # Opinion/comparison follow-ups ("so reena is smarter?", "is it better?") —
+            # answer honestly from status instead of re-dumping the same project block.
+            comparative_hint = any(h in ql for h in (
+                "smarter", "better", "more advanced", "superior", "improved",
+                "worse", "more powerful", "stronger", "more capable", "more impressive"
+            ))
+            if comparative_hint:
+                title = raw.get("title", "")
+                pair = session.get("pf_last_compare", [])
+                # Only reference "the other one" if this project was actually part of
+                # the pair last compared — otherwise there's nothing to compare it to.
+                other_title = next((t for t in pair if t != title), None) if title in pair else None
+                flavor = self._project_flavor(raw)
+
+                if raw.get("status") == "in_progress":
+                    templates = [
+                        f"Not quite yet — {title} is still in progress, so it's too early to call it "
+                        f"\"better\"" + (f" than {other_title}" if other_title else "") +
+                        ". Once it's finished I'll have a real answer for you 😄",
+
+                        f"Ask me again once {title} is actually done" +
+                        (f" — right now {other_title} is the more complete one simply because it's finished"
+                         if other_title else " — right now it's still being built") + ".",
+
+                        f"{title} is mid-build, so a fair head-to-head isn't really possible yet"
+                        + (f" against {other_title}" if other_title else "") + ". Check back once it ships!",
+                    ]
+                else:
+                    templates = [
+                        (f"{title} is finished — {flavor}. " if flavor else f"{title} is finished. ") +
+                        (f"{other_title} is a different build with its own focus, so it's less about "
+                         f"\"better\" and more about what each was built to do."
+                         if other_title else "It's less about \"better\" and more about what it was built to do."),
+
+                        (f"I'm proud of how {title} turned out" +
+                         (f" — {flavor}" if flavor else "") + ". " +
+                         (f"Hard to say it beats {other_title} though, they're solving different problems."
+                          if other_title else "")),
+
+                        (f"{title} does its job well" + (f" ({flavor})" if flavor else "") + "." +
+                         (f" Comparing it to {other_title} is a bit apples-to-oranges, honestly."
+                          if other_title else "")),
+                    ]
+                chosen = _pick_nonrepeating_session(f"cmp_opinion_{title.lower()}", templates).strip()
+                msg = f"<p>{chosen}</p>"
+                return {"ok": True, "html": msg}
+
             status_hint = any(h in ql for h in (
                 "is done", "is finished", "finished?", "done?", "is ready", "ready?",
                 "can i try", "can i use", "when will", "when is", "how is", "hows",
@@ -1544,4 +1629,4 @@ if __name__ == "__main__":
     except Exception:
         print("INTENTS: (unavailable)")
     print("KB docs:", len(qa.docs))
-    app.run(host=host, port=port, debug=True, use_reloader=False)
+    app.run(host=host, port=port, debug=True, use_reloader=True)
