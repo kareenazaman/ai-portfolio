@@ -190,10 +190,10 @@
   gallery:
     - "/static/images/fire.png"
   stack:
+    - NASA FIRMS API
     - JavaScript
     - Flask
     - Open Meteo
-    - NASA FIRMS API
     - Weather & AQI APIs
   desc: >
     <strong>Forseers</strong> is a web application built for the <strong>NASA Space Apps Hackathon</strong> 
