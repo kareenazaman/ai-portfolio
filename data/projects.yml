@@ -96,6 +96,83 @@
     - Real-time data modeling in Firebase
     - Practical teamwork and scope management during a competition
 
+- title: Orchid
+  year: 2025
+  category: "SQL Injection Detection – Personal Project"
+  image: "/static/images/orchid1.png"
+  gallery:
+    - "/static/images/orchid3.png"
+  stack:
+    - Machine Learning
+    - Logistic Regression
+    - TF-IDF
+    - FastAPI
+    - PostgreSQL
+    - Node.js
+  desc: >
+    <strong>Orchid</strong> is a machine learning model built for real-time <strong>SQL injection detection</strong> in web applications.
+    It uses <strong>TF-IDF features</strong> and a <strong>Logistic Regression classifier</strong> to identify suspicious or obfuscated SQL queries.
+    
+    Orchid helps prevent security breaches by analyzing each query before it reaches the database, flagging any potential SQL injection attempts.
+    
+    The model processes SQL queries in <strong>under 5 milliseconds</strong> and achieved over <strong>90% accuracy</strong> on a noisy, obfuscated test set.
+    
+    Our future roadmap includes expanding Orchid to detect more complex attack patterns, integrating it with a broader security monitoring system, and improving its detection speed and scalability for enterprise-level applications.
+
+- title: Forseers
+  year: 2025
+  category: "NASA Space Apps Hackathon – Team Project"
+  image: "/static/images/forseers.png"
+  gallery:
+    - "/static/images/fire.png"
+  stack:
+    - NASA FIRMS API
+    - JavaScript
+    - Flask
+    - Open Meteo
+    - Weather & AQI APIs
+  desc: >
+    <strong>Forseers</strong> is a web application built for the <strong>NASA Space Apps Hackathon</strong> 
+    that can detect <strong>Weather, Air Quality and Fire</strong> around the area. Users can set their 
+    current location on an interactive <strong>Mapbox</strong> map and see live weather, short-term 
+    forecasts, and air-quality metrics in a clean, dashboard-style UI.
+  
+    The app overlays a <strong>heatmap of active fires</strong> using NASA <strong>FIRMS</strong> satellite data, 
+    allowing users to instantly spot nearby fire clusters.
+  
+    Our future roadmap includes training our own <strong>smoke-prediction ML model</strong> to forecast 
+    smoke spread from active fires and deliver early alerts to nearby communities, along with 
+    expanded safety tips and emergency-readiness features.
+  links:
+    demo: https://air-quality-iota.vercel.app/
+
+- title: AI-Powered Portfolio Website
+  year: 2025
+  image: /static/images/portfolio.jpg
+  desc: >
+    An intelligent personal portfolio website featuring an AI chatbot assistant 
+    that speaks in first-person. Built with Flask, scikit-learn intent classification, 
+    and TF-IDF retrieval for natural conversations about my projects, skills, and experience.
+
+  stack:
+    - Python (Flask)
+    - scikit-learn (ML)
+    - JavaScript
+    - HTML/CSS
+    - TF-IDF Retrieval
+    - YAML
+
+  role: Full-Stack Developer & ML Engineer
+  links:
+    demo: "https://kareenazaman.com"
+
+  highlights:
+    - Developed AI chatbot with intent classification and retrieval-based QA system
+    - Implemented typing animations and natural conversation flow with context tracking
+    - Built FLIP-animated project modals with smooth transitions
+    - Created glassmorphic UI with responsive design and mobile optimization
+    - Trained custom ML model for portfolio-specific question routing
+    - Integrated session memory to prevent repetitive responses
 
 - title: SkinSense Pro
   year: 2025
@@ -152,86 +229,6 @@
     This project demonstrates my focus on <strong>AI reliability, system design, and real-world usability</strong>
     rather than black-box generation.
 
-
-
-
-- title: AI-Powered Portfolio Website
-  year: 2025
-  image: /static/images/portfolio.jpg
-  desc: >
-    An intelligent personal portfolio website featuring an AI chatbot assistant 
-    that speaks in first-person. Built with Flask, scikit-learn intent classification, 
-    and TF-IDF retrieval for natural conversations about my projects, skills, and experience.
-
-  stack:
-    - Python (Flask)
-    - scikit-learn (ML)
-    - JavaScript
-    - HTML/CSS
-    - TF-IDF Retrieval
-    - YAML
-
-  role: Full-Stack Developer & ML Engineer
-  links:
-    demo: "https://kareenazaman.com"
-
-  highlights:
-    - Developed AI chatbot with intent classification and retrieval-based QA system
-    - Implemented typing animations and natural conversation flow with context tracking
-    - Built FLIP-animated project modals with smooth transitions
-    - Created glassmorphic UI with responsive design and mobile optimization
-    - Trained custom ML model for portfolio-specific question routing
-    - Integrated session memory to prevent repetitive responses
-
-- title: Forseers
-  year: 2025
-  category: "NASA Space Apps Hackathon – Team Project"
-  image: "/static/images/forseers.png"
-  gallery:
-    - "/static/images/fire.png"
-  stack:
-    - NASA FIRMS API
-    - JavaScript
-    - Flask
-    - Open Meteo
-    - Weather & AQI APIs
-  desc: >
-    <strong>Forseers</strong> is a web application built for the <strong>NASA Space Apps Hackathon</strong> 
-    that can detect <strong>Weather, Air Quality and Fire</strong> around the area. Users can set their 
-    current location on an interactive <strong>Mapbox</strong> map and see live weather, short-term 
-    forecasts, and air-quality metrics in a clean, dashboard-style UI.
-  
-    The app overlays a <strong>heatmap of active fires</strong> using NASA <strong>FIRMS</strong> satellite data, 
-    allowing users to instantly spot nearby fire clusters.
-  
-    Our future roadmap includes training our own <strong>smoke-prediction ML model</strong> to forecast 
-    smoke spread from active fires and deliver early alerts to nearby communities, along with 
-    expanded safety tips and emergency-readiness features.
-  links:
-    demo: https://air-quality-iota.vercel.app/
-
-- title: Orchid
-  year: 2025
-  category: "SQL Injection Detection – Personal Project"
-  image: "/static/images/orchid1.png"
-  gallery:
-    - "/static/images/orchid3.png"
-  stack:
-    - Machine Learning
-    - Logistic Regression
-    - TF-IDF
-    - FastAPI
-    - PostgreSQL
-    - Node.js
-  desc: >
-    <strong>Orchid</strong> is a machine learning model built for real-time <strong>SQL injection detection</strong> in web applications.
-    It uses <strong>TF-IDF features</strong> and a <strong>Logistic Regression classifier</strong> to identify suspicious or obfuscated SQL queries.
-    
-    Orchid helps prevent security breaches by analyzing each query before it reaches the database, flagging any potential SQL injection attempts.
-    
-    The model processes SQL queries in <strong>under 5 milliseconds</strong> and achieved over <strong>90% accuracy</strong> on a noisy, obfuscated test set.
-    
-    Our future roadmap includes expanding Orchid to detect more complex attack patterns, integrating it with a broader security monitoring system, and improving its detection speed and scalability for enterprise-level applications.
 
 
 - title: Lumi
