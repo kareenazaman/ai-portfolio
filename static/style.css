@@ -3,6 +3,25 @@
 :root {
   --accent: #a45ee5; /* lavender */
   --brand: #d96048;  /* your main button color */
+  --ink: #322b45;    /* deep plum-charcoal, replaces flat grey for chips/dark surfaces */
+  --shadow-soft: 0 4px 16px rgba(30, 20, 50, .08);
+  --shadow-lift: 0 10px 26px rgba(30, 20, 50, .14);
+  --ease-smooth: cubic-bezier(.22, .8, .3, 1);
+}
+
+::selection {
+  background: rgba(164, 94, 229, .25);
+  color: #1a1420;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 *,
@@ -158,6 +177,11 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,.12);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.ask-box:focus-within {
+  border-color: rgba(164, 94, 229, .55);
+  box-shadow: 0 10px 30px rgba(0,0,0,.12), 0 0 0 4px rgba(164, 94, 229, .14);
 }
 
 .ask-box input,
@@ -192,9 +216,15 @@ body {
   font-size: 1.2rem;
   color: #fff;
   background-color: var(--brand);
-  transition: background 0.2s ease;
+  box-shadow: 0 4px 12px rgba(217, 96, 72, .35);
+  transition: background .2s ease, transform .2s var(--ease-smooth), box-shadow .2s ease;
 }
-.ask-box button:hover { background-color: #c24f39; }
+.ask-box button:hover {
+  background-color: #c24f39;
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 6px 16px rgba(217, 96, 72, .45);
+}
+.ask-box button:active { transform: translateY(0) scale(.96); }
 
 /* ========== Feature Tiles ========== */
 #tiles { margin-top: 1rem; }
@@ -217,9 +247,12 @@ body {
   flex-direction: column;
   align-items: center;
   gap: .3rem;
-  box-shadow: 0 1px 0 rgba(0,0,0,.04);
-  transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow: var(--shadow-soft);
+  transition: transform .25s var(--ease-smooth), box-shadow .25s var(--ease-smooth), background .2s ease;
   font-size: 0.9rem;
+}
+.feature-tile:active {
+  transform: translateY(0) scale(.97);
 }
 .feature-tile:hover {
   transform: translateY(-2px);
@@ -256,6 +289,11 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     color: #3a3a3a;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.chat-mode .chat-footer #ask .ask-box:focus-within {
+    border-color: rgba(164, 94, 229, .55);
+    box-shadow: 0 0 0 4px rgba(164, 94, 229, .16);
 }
 @media (max-width:600px){
   .chat-mode #ask-input { color: black; }
@@ -460,25 +498,26 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
   border-radius: 30px;
   max-width: min(720px, 100%);
   line-height: 1.5;
-  box-shadow: 0 2px 8px rgba(15,18,34,.06);
+  box-shadow: var(--shadow-soft);
 }
 
 
 /* user messages – right side, narrower */
 .bubble.user {
   align-self: flex-end;
-  background: #d96048;
-  border: 3px solid #d96048;
+  background: linear-gradient(155deg, #e0715a 0%, #d96048 100%);
+  border: none;
   color: white;
   width: fit-content;
   max-width: 70%;
+  box-shadow: 0 6px 18px rgba(217, 96, 72, .28);
 }
 
 /* AI text bubbles – left side */
 .bubble.ai {
   align-self: flex-start;
   background: #fff;
-  border: 3px solid #eee;
+  border: 1px solid rgba(15,18,34,.06);
   text-align: left;
   letter-spacing: normal;
   word-spacing: normal;
@@ -807,11 +846,11 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
   background-position: center;
   box-shadow: 0 8px 24px rgba(0,0,0,.08);
   cursor: pointer;
-  transition: transform .25s ease, box-shadow .25s ease, border .25s ease;
+  transition: transform .3s var(--ease-smooth), box-shadow .3s var(--ease-smooth), border .25s ease;
 }
 .project-card:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(0,0,0,.2);
+  box-shadow: var(--shadow-lift), 0 12px 28px rgba(0,0,0,.2);
   border: 2px solid var(--accent);
   border-color: #d96048;
 }
@@ -995,14 +1034,20 @@ body:not(.chat-mode) #tiles .tile-emoji { font-size: 1.35rem; }
 }
 
 .skills-chip {
-  background: #54504f;
+  background: linear-gradient(155deg, var(--ink) 0%, #241f33 100%);
   color: #fff;
   padding: 0.45rem 0.9rem;
   font-size: 0.85rem;
   border-radius: 999px;
   white-space: nowrap;
   font-weight: 500;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 14px rgba(50, 43, 69, .28);
+  transition: transform .2s var(--ease-smooth), box-shadow .2s ease, background .2s ease;
+}
+.skills-chip:hover {
+  background: linear-gradient(155deg, #453a63 0%, var(--ink) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(164, 94, 229, .28);
 }
 
 /* === Certifications row === */
