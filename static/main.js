@@ -1326,7 +1326,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---- local intents / follow-ups (no server call) ----
     const isGreeting = /\b(hi|hello|hey|hiya|morning|evening)\b/.test(ql);
-    const asksIdentity = /\b(what\s*are\s*you|what\s*r\s*u|are\s*you\s*a\s*bot|who\s*(made|built)\s*you|who\s*are\s*you|who\s*r\s*u)\b/.test(ql);
+    // "what are you working on/building" etc. must NOT be swallowed by the identity
+    // check below ("what are you" is a substring of it) — let those fall through to
+    // the backend, which has the real current-project answer.
+    const asksCurrentWork = /\b(working on|currently building|current project|building (right now|now)|what'?s next|next project|upcoming project)\b/.test(ql);
+    const asksIdentity = !asksCurrentWork && /\b(what\s*are\s*you|what\s*r\s*u|are\s*you\s*a\s*bot|who\s*(made|built)\s*you|who\s*are\s*you|who\s*r\s*u)\b/.test(ql);
     const asksAbout =
       // only treat "about" as ABOUT ME when it's clearly about you
       /\b(about\s+(you|yourself|kareena)|introduce\s+yourself|your\s+bio|profile\s+summary)\b/.test(ql) ||
